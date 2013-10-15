@@ -1,31 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from os import path, access, R_OK, W_OK
+
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_ambient_light import AmbientLight
+from create_cfg import local_db, cfg_filename, wd_table, date_table  # include variables from create_cfg
+from os import path, access, R_OK, W_OK
 from datetime import date, datetime
 import configparser, sqlite3
-
-
-cfg_filename = 'example.cfg'
-db_filename = 'weather.db'
-
-date_table = ('''CREATE TABLE IF NOT EXISTS date(
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                created_at TIMESTAMP)
-                ''')
-
-wd_table = ('''CREATE TABLE IF NOt EXISTS weatherdata(
-                uid VARCHAR(5),
-                device_name VARCHAR(20),
-                illuminance REAL,
-                rel_humidity REAL,
-                air_pressure REAL,
-                altitude REAL,
-                date_id INTEGER,
-                FOREIGN KEY(date_id) REFERENCES date(id))
-                ''')
 
 def get_illuminance():
         
@@ -47,7 +29,7 @@ def get_illuminance():
     
     illuminance = al.get_illuminance()/10.0 # Get current humidity (unit is %RH/10)
         
-    db = sqlite3.connect(db_filename) # build connection to local database
+    db = sqlite3.connect(local_db) # build connection to local database
     
     c = db.cursor() # create cursor
     
@@ -61,7 +43,7 @@ def get_illuminance():
     
     id = c.lastrowid # get recent id entry from database 
     
-    c.execute('''INSERT INTO weatherdata(uid ,illuminance, date_id, device_name) VALUES(?,?,?,?)''', (uid,illuminance,id,'illuminance',))
+    c.execute('''INSERT INTO weatherdata(uid ,value, keyword, date_id, device_name) VALUES(?,?,?,?,?)''', (uid,illuminance,'illuminance', id,'illuminance',))
     # insert the uid, device name the id from the date table an die lightness value into the weather table
     
     db.commit() # save creates and inserts permanent

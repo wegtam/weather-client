@@ -2,16 +2,32 @@
 # -*- coding: utf-8 -*-
 
 from tinkerforge.ip_connection import IPConnection
-from tinkerforge.bricklet_barometer import Barometer
 from os import path, access, R_OK, W_OK
 import configparser, time
 
 
-filename = 'example.cfg'
-PATH = ('./' + filename)
+cfg_filename = 'example.cfg'
+local_db = 'weather.db'
+PATH = ('./' + cfg_filename)
 HOST = "localhost"
 PORT = 4223
 SleepTime = 0.5
+
+#------------------------- Local DB variables --------------------------- 
+
+date_table = ('''CREATE TABLE IF NOT EXISTS date(
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                created_at TIMESTAMP)
+                ''')
+
+wd_table = ('''CREATE TABLE IF NOt EXISTS weatherdata(
+                uid VARCHAR(5),
+                device_name VARCHAR(20),
+                value REAL,
+                keyword VARCHAR(20),
+                date_id INTEGER,
+                FOREIGN KEY(date_id) REFERENCES date(id))
+                ''')
 
 #---------------------------------- function to create the config file if it doesn`t exist ----------------------------------------
 
@@ -23,7 +39,7 @@ def create_configfile():
     cfg.set('Connection', 'Port', PORT)
     cfg.set('Connection', 'SleepTime', SleepTime)
 
-    with open(filename, 'w') as configfile:
+    with open(cfg_filename, 'w') as configfile:
         cfg.write(configfile)
     
     """print ('Config Datei erstellt')"""
@@ -65,7 +81,7 @@ def write_bricklets_into_configfile():
             
         cfg = configparser.ConfigParser()
             
-        cfg.read(filename) # open config file to read
+        cfg.read(cfg_filename) # open config file to read
             
         port = cfg.getint('Connection', 'Port') # get port entry from config file
             
@@ -85,7 +101,7 @@ def write_bricklets_into_configfile():
                 
         if cfg.has_section(barometer_brick["Bricklet_Name"]) == False:
             cfg.add_section(barometer_brick["Bricklet_Name"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Section Barometer erstellt')
             else:
@@ -93,7 +109,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(barometer_brick["Bricklet_Name"], 'Bricklet_UID') == False:    
             cfg.set(barometer_brick["Bricklet_Name"], 'Bricklet_UID', barometer_brick["Bricklet_UID"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag UID erstellt')
             else:
@@ -101,7 +117,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(barometer_brick["Bricklet_Name"], 'Bricklet_Position') == False:    
             cfg.set(barometer_brick["Bricklet_Name"], 'Bricklet_Position', barometer_brick["Bricklet_Position"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Position erstellt')
             else:
@@ -109,7 +125,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(barometer_brick["Bricklet_Name"], 'Bricklet_Firmware') == False:    
             cfg.set(barometer_brick["Bricklet_Name"], 'Bricklet_Firmware', str(barometer_brick["Bricklet_Firmware"]))
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Firmware erstellt')
             else:
@@ -119,7 +135,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_section(gps_brick["Bricklet_Name"]) == False:
             cfg.add_section(gps_brick["Bricklet_Name"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Section Barometer erstellt')
             else:
@@ -127,7 +143,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(gps_brick["Bricklet_Name"], 'Bricklet_UID') == False:    
             cfg.set(gps_brick["Bricklet_Name"], 'Bricklet_UID', gps_brick["Bricklet_UID"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag UID erstellt')
             else:
@@ -135,7 +151,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(gps_brick["Bricklet_Name"], 'Bricklet_Position') == False:    
             cfg.set(gps_brick["Bricklet_Name"], 'Bricklet_Position', gps_brick["Bricklet_Position"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Position erstellt')
             else:
@@ -143,7 +159,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(gps_brick["Bricklet_Name"], 'Bricklet_Firmware') == False:    
             cfg.set(gps_brick["Bricklet_Name"], 'Bricklet_Firmware', str(gps_brick["Bricklet_Firmware"]))
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Firmware erstellt')
             else:
@@ -153,7 +169,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_section(humidity_brick["Bricklet_Name"]) == False:
             cfg.add_section(humidity_brick["Bricklet_Name"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Section Barometer erstellt')
             else:
@@ -161,7 +177,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(humidity_brick["Bricklet_Name"], 'Bricklet_UID') == False:    
             cfg.set(humidity_brick["Bricklet_Name"], 'Bricklet_UID', humidity_brick["Bricklet_UID"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag UID erstellt')
             else:
@@ -169,7 +185,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(humidity_brick["Bricklet_Name"], 'Bricklet_Position') == False:    
             cfg.set(humidity_brick["Bricklet_Name"], 'Bricklet_Position', humidity_brick["Bricklet_Position"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Position erstellt')
             else:
@@ -177,7 +193,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(humidity_brick["Bricklet_Name"], 'Bricklet_Firmware') == False:    
             cfg.set(humidity_brick["Bricklet_Name"], 'Bricklet_Firmware', str(humidity_brick["Bricklet_Firmware"]))
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Firmware erstellt')
             else:
@@ -187,7 +203,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_section(illuminance_brick["Bricklet_Name"]) == False:
             cfg.add_section(illuminance_brick["Bricklet_Name"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Section Barometer erstellt')
             else:
@@ -195,7 +211,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(illuminance_brick["Bricklet_Name"], 'Bricklet_UID') == False:    
             cfg.set(illuminance_brick["Bricklet_Name"], 'Bricklet_UID', illuminance_brick["Bricklet_UID"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag UID erstellt')
             else:
@@ -203,7 +219,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(illuminance_brick["Bricklet_Name"], 'Bricklet_Position') == False:    
             cfg.set(illuminance_brick["Bricklet_Name"], 'Bricklet_Position', illuminance_brick["Bricklet_Position"])
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Position erstellt')
             else:
@@ -211,7 +227,7 @@ def write_bricklets_into_configfile():
             
         if cfg.has_option(illuminance_brick["Bricklet_Name"], 'Bricklet_Firmware') == False:    
             cfg.set(illuminance_brick["Bricklet_Name"], 'Bricklet_Firmware', str(illuminance_brick["Bricklet_Firmware"]))
-            with open(filename, 'w') as configfile:
+            with open(cfg_filename, 'w') as configfile:
                 cfg.write(configfile)
                 """print ('Eintrag Firmware erstellt')
             else:
