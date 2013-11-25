@@ -40,3 +40,6 @@ Desktop.ini
 # Python
 __pycache__/
 *.py[cod]
+# Weather-DB
+/src/weather.db
+/src/example.cfg
