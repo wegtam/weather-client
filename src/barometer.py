@@ -45,8 +45,6 @@ def get_airpressure(id):
         
         db.commit() # save creates and inserts permanent  
 
-        print('Air Pressure: ' + str(air_pressure) + ' mbar')
-        print()
-        print('Altitude: ' + str(altitude) + ' m')
-
         ipcon.disconnect()
+    
+        return({"air_pressure": air_pressure, "altitude": altitude})
