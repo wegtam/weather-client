@@ -42,7 +42,7 @@ if path.isfile(PATH) and access(PATH, R_OK) and access(PATH, W_OK) == True:
     
     humidity = str(get_humidity(id))
     
-    illuminance = get_illuminance(id)
+    illuminance = str(get_illuminance(id))
     
     barometer = get_airpressure(id)
     
@@ -50,7 +50,7 @@ if path.isfile(PATH) and access(PATH, R_OK) and access(PATH, W_OK) == True:
     #url = 'http://127.0.0.1:8000/save_wd/20/20/20/20/20/1/2'
     url = 'http://127.0.0.1:8000/save_wd/'
 
-    fields = {"humidity": humidity, "temperature": "20", "altitude": barometer["altitude"], "lightness": illuminance, "air_pressure": barometer["air_pressure"], "weatherstation_id": "1", "user_id": "2"}
+    fields = {"humidity": humidity, "temperature": "20", "altitude": str(barometer["altitude"]), "lightness": illuminance, "air_pressure": str(barometer["air_pressure"]), "weatherstation_id": "1", "user_id": "2"}
     
     print(fields)
     #r = http.request_encode_url('GET', url)
