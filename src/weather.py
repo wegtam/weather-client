@@ -42,15 +42,15 @@ if path.isfile(PATH) and access(PATH, R_OK) and access(PATH, W_OK) == True:
     
     humidity = str(get_humidity(id))
     
-    get_illuminance(id)
+    illuminance = get_illuminance(id)
     
-    get_airpressure(id)
+    barometer = get_airpressure(id)
     
     http = urllib3.PoolManager()
     #url = 'http://127.0.0.1:8000/save_wd/20/20/20/20/20/1/2'
     url = 'http://127.0.0.1:8000/save_wd/'
 
-    fields = {"humidity": humidity, "temperature": "20", "altitude": "20", "lightness": "20", "air_pressure": "20", "weatherstation_id": "1", "user_id": "2"}
+    fields = {"humidity": humidity, "temperature": "20", "altitude": barometer["altitude"], "lightness": illuminance, "air_pressure": barometer["air_pressure"], "weatherstation_id": "1", "user_id": "2"}
     
     print(fields)
     #r = http.request_encode_url('GET', url)
