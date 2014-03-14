@@ -12,6 +12,10 @@ PATH = ('./' + cfg_filename)
 HOST = "localhost"
 PORT = 4223
 SleepTime = 0.5
+barometer_brick = None
+humidity_brick = None
+gps_brick = None
+illuminance_brick = None
 
 #------------------------- Local DB variables --------------------------- 
 
@@ -84,7 +88,7 @@ def write_bricklets_into_configfile():
         cfg.read(cfg_filename) # open config file to read
             
         port = cfg.getint('Connection', 'Port') # get port entry from config file
-            
+           
         host = cfg.get('Connection', 'Host') # get host entry from config file
             
         sleeptime = cfg.getfloat('Connection', 'SleepTime')  # get the sleeptime from config file

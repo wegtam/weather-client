@@ -3,14 +3,12 @@
 
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_humidity import Humidity
-from create_cfg import local_db, cfg_filename, wd_table, date_table  # include variables from create_cfg
+from create_cfg import local_db, cfg_filename, wd_table, date_table, bricklet_callback # include variables from create_cfg
 from os import path, access, R_OK, W_OK
 from datetime import date, datetime
 import configparser, sqlite3
 
-def get_humidity():
-    
-    ipcon = IPConnection() # Create IP connection
+def get_humidity(id):
     
     cfg = configparser.ConfigParser()
     
@@ -22,6 +20,8 @@ def get_humidity():
     
     uid = cfg.get('Humidity', 'bricklet_uid') # uid port entry from config file
     
+    ipcon = IPConnection() # Create IP connection
+    
     ipcon.connect(host, port) # Connect to brickd
     
     h = Humidity(uid, ipcon) # Create device object
@@ -32,21 +32,17 @@ def get_humidity():
     
     c = db.cursor() # create cursor
     
-    c.execute(date_table) # create date table 
-    
     c.execute(wd_table) # create weatherdata table
-    
-    now = datetime.now() # create a date object
-    
-    c.execute('''INSERT INTO date(created_at) VALUES(?)''', (now,)) # insert the actually date and time into the date table
-    
-    id = c.lastrowid # get recent id entry from database
     
     c.execute('''INSERT INTO weatherdata(uid , value, keyword, date_id, device_name) VALUES(?,?,?,?,?)''', (uid,rh,'rel. humidity', id,'humidity',))
     # insert the uid, device name the id from the date table an die humdity value into the weather table
     
     db.commit() # save creates and inserts permanent  
+    
     print()
     print('Relative Humidity: ' + str(rh) + ' %RH')
     print()
+        
     ipcon.disconnect()
+
+    return(rh)
