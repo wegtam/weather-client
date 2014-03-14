@@ -42,8 +42,7 @@ def get_illuminance(id):
         
         db.commit() # save creates and inserts permanent
             
-        print('Illuminance: ' + str(illuminance) + ' Lux')
-        print()
-        
         ipcon.disconnect()
+
+        return(illuminance)
 
