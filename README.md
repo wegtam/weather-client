@@ -1,25 +1,11 @@
-# README
+# Wegtam Weather Client
 
-In dieser Datei beschreibt man die Anwendung und gibt Informationen zu
-wichtigen Themen.
+This project together with the [Wegtam Weather
+API](https://github.com/wegtam/weather-api) project resulted
+from an internship by [Florian Drews](https://github.com/fd86) within
+our company ([Wegtam UG](http://www.wegtam.org)).
 
-## Installation
+We decided to make it available as open source under the gpl 2 license.
 
-Zum Beispiel zur Installation.
-
-1. Erstens
-2. Zweitens
-3. Drittens
-
-## Konfiguration
-
-Oder zur Konfiguration... :-)
-
-Man kann auch Codeblöcke machen:
-
-    ipcon = IPConnection()
-    cfg = configparser.ConfigParser()
-    cfg.read("TRALLALA")
-
-Es geht auch `CODE-BLOCK INLINE` mittendrin.
+It is still work in progress.
 
