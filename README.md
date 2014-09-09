@@ -1,5 +1,7 @@
 # Wegtam Weather Client
 
+[![GPL 2.0](http://img.shields.io/badge/license-gpl-yellowgreen.svg)](http://opensource.org/licenses/GPL-2.0)
+
 This project together with the [Wegtam Weather
 API](https://github.com/wegtam/weather-api) project resulted
 from an internship by [Florian Drews](https://github.com/fd86) within
